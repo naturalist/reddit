@@ -11,7 +11,7 @@ const (
 	sizey = 7
 )
 
-var table = []uint8{
+var table = []byte{
 	// A
 	0, 0, 1, 0, 0,
 	0, 1, 0, 1, 0,
@@ -222,24 +222,37 @@ var table = []uint8{
 	1, 1, 1, 1, 1,
 }
 
-func letterLine(letter uint8, line uint8) []uint8 {
-    idx := (letter-'A') * sizex * sizey + line * sizex
+func letterLine(letter byte, line int) []byte {
+    var idx = (int(letter-'A') * sizex * sizey + line * sizex)
 	return table[idx:idx+sizex]
 }
 
 func main() {
-    fmt.Print(letterLine('H', 2))
-    os.Exit(0)
-
 	var text string
 	if len(os.Args) < 2 {
 		fmt.Print("Enter text: ")
 		fmt.Scanf("%s", &text)
 	}
+
 	text = strings.ToUpper(text)
+
+    // Print header
+    fmt.Printf("P1\n%d %d\n", len(text) * sizex, sizey)
     for j := 0; j < sizey; j++ {
+
+        // Padding at the beginning of the text
+        fmt.Printf("0")
+
         for i := 0; i < len(text); i++ {
-            fmt.Print(letterLine(text[i], uint8(j)))
+            line := letterLine(text[i], j)
+
+            // Draw the next line of the letter
+            for k := 0; k < len(line); k++ {
+                fmt.Printf("%2d", line[k])
+            }
+
+            // Padding at the end of the letter
+            fmt.Printf(" 0")
         }
         fmt.Println()
 	}
