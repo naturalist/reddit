@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
+    "bufio"
 )
 
 const (
-	sizex = 5
-	sizey = 7
+	SizeX = 5
+	SizeY = 7
 )
 
 var table = []byte{
@@ -222,29 +223,34 @@ var table = []byte{
 	1, 1, 1, 1, 1,
 }
 
-func letterLine(letter byte, line int) []byte {
-    var idx = (int(letter-'A') * sizex * sizey + line * sizex)
-	return table[idx:idx+sizex]
-}
-
 func main() {
 	var text string
 	if len(os.Args) < 2 {
 		fmt.Print("Enter text: ")
-		fmt.Scanf("%s", &text)
-	}
+        scanner := bufio.NewScanner(os.Stdin)
+        scanner.Scan()
+        text = scanner.Text()
+	} else {
+        text = os.Args[1]
+    }
 
 	text = strings.ToUpper(text)
 
     // Print header
-    fmt.Printf("P1\n%d %d\n", len(text) * sizex, sizey)
-    for j := 0; j < sizey; j++ {
+    fmt.Printf("P1\n%d %d\n", len(text) * (SizeX + 1) + 1, SizeY)
+    for j := 0; j < SizeY; j++ {
 
         // Padding at the beginning of the text
         fmt.Printf("0")
 
         for i := 0; i < len(text); i++ {
-            line := letterLine(text[i], j)
+
+            var line []byte
+            if text[i] < 'A' || text[i] > 'Z' {
+                line = make([]byte, SizeX)
+            } else {
+                line = letterLine(text[i], j)
+            }
 
             // Draw the next line of the letter
             for k := 0; k < len(line); k++ {
@@ -257,3 +263,9 @@ func main() {
         fmt.Println()
 	}
 }
+
+func letterLine(letter byte, line int) []byte {
+    var idx = (int(letter-'A') * SizeX * SizeY + line * SizeX)
+	return table[idx:idx+SizeX]
+}
+
