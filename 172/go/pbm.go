@@ -243,13 +243,13 @@ func main() {
         // Padding at the beginning of the text
         fmt.Printf("0")
 
-        for i := 0; i < len(text); i++ {
+        for _, char := range text {
 
             var line []byte
-            if text[i] < 'A' || text[i] > 'Z' {
+            if char < 'A' || char > 'Z' {
                 line = make([]byte, SizeX)
             } else {
-                line = letterLine(text[i], j)
+                line = letterLine(char, j)
             }
 
             // Draw the next line of the letter
@@ -264,7 +264,7 @@ func main() {
 	}
 }
 
-func letterLine(letter byte, line int) []byte {
+func letterLine(letter rune, line int) []byte {
     var idx = (int(letter-'A') * SizeX * SizeY + line * SizeX)
 	return table[idx:idx+SizeX]
 }
