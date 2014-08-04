@@ -7,12 +7,55 @@ import (
 )
 
 const (
-    white = iota
+    _ byte = iota
+    white
     black
     red
     green
     blue
+    magenta
+    brown
+    yellow
 )
+
+var (
+    sizeX, sizeY int
+    x, y int
+    rules Rules
+    grid Grid
+)
+
+type Grid []byte
+
+func (g *Grid) init( x, y int) {
+    *g = make(Grid, x * y)
+}
+
+func (g *Grid) set(x, y int, color byte) error {
+    if x < 0 || x >= sizeX || y < 0 || y >= sizeY {
+        return fmt.Errorf("Set out of bounderies [%v, %v]", x, y)
+    }
+
+    (*g)[x * sizeX + y] = color
+    return nil
+}
+
+func (g *Grid) get(x, y int) byte {
+    if x < 0 || x >= sizeX || y < 0 || y >= sizeY {
+        return 0
+    }
+
+    return (*g)[x * sizeX + y]
+}
+
+func (g *Grid) show() {
+    for x := 0; x < sizeX; x++ {
+        for y := 0; y < sizeY; y++ {
+            fmt.Print(g.get(x, y))
+        }
+        fmt.Println()
+    }
+}
 
 // New type to handle the direction rules
 type Rules []int8
@@ -33,14 +76,11 @@ func (r *Rules) read(s string) (err error) {
     return nil
 }
 
-var (
-    sizeX, sizeY int
-    rules Rules
-)
-
 func init() {
-    flag.IntVar(&sizeX, "x", 12, "x size of the grid")
-    flag.IntVar(&sizeY, "y", 12, "y size of the grid")
+    flag.IntVar(&sizeX, "sizex", 11, "x size of the grid")
+    flag.IntVar(&sizeY, "sizey", 11, "y size of the grid")
+    flag.IntVar(&x, "x", 11, "starting x position of the ant")
+    flag.IntVar(&y, "y", 11, "starting y position of the ant")
     flag.Parse()
 
     if ( flag.NArg() < 1 ) {
@@ -51,15 +91,17 @@ func init() {
         os.Exit(1)
     }
 
-}
-
-func main() {
     err := rules.read(flag.Arg(0))
     if ( err != nil ) {
         fmt.Println("Error: ", err)
         os.Exit(1)
     }
-    fmt.Println(rules);
+
+    grid.init(sizeX, sizeY)
+}
+
+func main() {
+    grid.show()
 
 }
 
