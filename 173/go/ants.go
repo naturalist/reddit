@@ -6,21 +6,9 @@ import (
     "os"
 )
 
-const (
-    _ byte = iota
-    white
-    black
-    red
-    green
-    blue
-    magenta
-    brown
-    yellow
-)
-
 var (
     sizeX, sizeY int
-    x, y int
+    X, Y int
     rules Rules
     grid Grid
 )
@@ -51,7 +39,13 @@ func (g *Grid) get(x, y int) byte {
 func (g *Grid) show() {
     for x := 0; x < sizeX; x++ {
         for y := 0; y < sizeY; y++ {
-            fmt.Print(g.get(x, y))
+            var char byte
+            switch val := g.get(x, y); {
+                case val == 0: char = '.'
+                case x == X && y == Y: char = 'X'
+                default: char = 'A' - 1 + val
+            }
+            fmt.Printf("%v ", string(char))
         }
         fmt.Println()
     }
@@ -79,8 +73,8 @@ func (r *Rules) read(s string) (err error) {
 func init() {
     flag.IntVar(&sizeX, "sizex", 11, "x size of the grid")
     flag.IntVar(&sizeY, "sizey", 11, "y size of the grid")
-    flag.IntVar(&x, "x", 11, "starting x position of the ant")
-    flag.IntVar(&y, "y", 11, "starting y position of the ant")
+    flag.IntVar(&X, "x", 5, "starting x position of the ant")
+    flag.IntVar(&Y, "y", 5, "starting y position of the ant")
     flag.Parse()
 
     if ( flag.NArg() < 1 ) {
