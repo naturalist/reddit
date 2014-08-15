@@ -6,7 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-    "io/ioutil"
+    "os"
+    "bufio"
 )
 
 /* Letters type is used to sort a map   */
@@ -87,20 +88,19 @@ func singleByteXor(xs string) (string, byte) {
 	return string(s), code
 }
 
-func fileSingleXor(filename string) (string, byte) {
-    text, err := ioutil.ReadFile(filename)
+func fileSingleXor(filename string) {
+    f, err := os.Open(filename)
     if err != nil {
         panic(err)
     }
 
-    s, err := hex.DecodeString(string(text))
-    if err != nil {
-        panic(err)
+    s := bufio.NewScanner(f)
+    for s.Scan() {
+        line, _ := singleByteXor(s.Text())
+        fmt.Println(line)
     }
 
-    fmt.Println(string(s))
-
-    return "", 0
+    return
 }
 
 func main() {
