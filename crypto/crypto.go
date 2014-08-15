@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+    "io/ioutil"
 )
 
 /* Letters type is used to sort a map   */
@@ -86,8 +87,22 @@ func singleByteXor(xs string) (string, byte) {
 	return string(s), code
 }
 
+func fileSingleXor(filename string) (string, byte) {
+    text, err := ioutil.ReadFile(filename)
+    if err != nil {
+        panic(err)
+    }
+
+    s, err := hex.DecodeString(string(text))
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Println(string(s))
+
+    return "", 0
+}
+
 func main() {
-	s, code := singleByteXor("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
-	fmt.Println(s)
-	fmt.Printf("%x\n", code)
+	fileSingleXor("4.txt")
 }
